@@ -4,6 +4,8 @@ import '../../features/routine/presentation/screens/home_page.dart';
 import '../../features/routine/presentation/screens/task_form_page.dart';
 import '../../features/pet/presentation/screens/pet_screen.dart';
 import '../../features/stats/presentation/screens/stats_page.dart';
+import '../../features/settings/presentation/screens/settings_page.dart';
+import '../../features/settings/presentation/screens/edit_profile_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../shared/widgets/app_bottom_nav.dart';
 
@@ -40,6 +42,12 @@ final appRouter = GoRouter(
             child: StatsPage(),
           ),
         ),
+        GoRoute(
+          path: '/settings',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: SettingsPage(),
+          ),
+        ),
       ],
     ),
     GoRoute(
@@ -54,6 +62,11 @@ final appRouter = GoRouter(
         final id = state.pathParameters['id']!;
         return TaskFormPage(taskId: id);
       },
+    ),
+    GoRoute(
+      path: '/settings/edit-profile',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const EditProfilePage(),
     ),
   ],
 );
