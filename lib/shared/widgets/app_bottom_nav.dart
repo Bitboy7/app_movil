@@ -35,7 +35,7 @@ class AppBottomNav extends StatelessWidget {
             _navItem(context, Icons.pets_rounded, 'Mascota', 1, currentIndex, '/pet'),
             const SizedBox(width: 40),
             _navItem(context, Icons.bar_chart_rounded, 'Stats', 2, currentIndex, '/stats'),
-            _navItem(context, Icons.settings_rounded, 'Ajustes', 3, currentIndex, '/home'),
+            _navItem(context, Icons.settings_rounded, 'Ajustes', 3, currentIndex, '/settings'),
           ],
         ),
       ),
@@ -77,6 +77,7 @@ class AppBottomNav extends StatelessWidget {
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/pet')) return 1;
     if (location.startsWith('/stats')) return 2;
+    if (location.startsWith('/settings')) return 3;
     return 0;
   }
 }
