@@ -7,18 +7,36 @@ import '../../features/stats/presentation/screens/stats_page.dart';
 import '../../features/settings/presentation/screens/settings_page.dart';
 import '../../features/settings/presentation/screens/edit_profile_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
+import '../../features/onboarding/presentation/splash_screen.dart';
 import '../../shared/widgets/app_bottom_nav.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+CustomTransitionPage<void> _fadePage(LocalKey key, Widget child) =>
+    CustomTransitionPage<void>(
+      key: key,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 500),
+      transitionsBuilder: (context, animation, _, child) => FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: child,
+      ),
+    );
+
 final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/home',
+  initialLocation: '/splash',
   routes: [
     GoRoute(
+      path: '/splash',
+      pageBuilder: (context, state) =>
+          _fadePage(state.pageKey, const SplashScreen()),
+    ),
+    GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const OnboardingPage(),
+      pageBuilder: (context, state) =>
+          _fadePage(state.pageKey, const OnboardingPage()),
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,

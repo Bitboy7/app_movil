@@ -3,6 +3,12 @@
 ## Commands
 
 ```bash
+# IMPORTANT: Flutter está en C:\Users\TU-USUARIO\flutter\bin
+# Agrégalo al PATH del usuario para usar flutter directamente:
+#   [Environment]::SetEnvironmentVariable("PATH", "$env:PATH;C:\Users\sopes\flutter\bin", "User")
+# O antepone cada comando con:
+#   $env:Path += ";C:\Users\sopes\flutter\bin"; flutter <command>
+
 # Analyze (lint + type-check)
 flutter analyze
 
