@@ -27,10 +27,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
     if (token != null) {
+      final name = prefs.getString('user_name') ?? prefs.getString('auth_name') ?? 'Usuario';
+      final email = prefs.getString('user_email') ?? prefs.getString('auth_email') ?? '';
+      final photoUrl = prefs.getString('user_photo_url');
       final user = User(
         id: prefs.getString('auth_id') ?? '',
-        name: prefs.getString('auth_name') ?? 'Usuario',
-        email: prefs.getString('auth_email') ?? '',
+        name: name,
+        email: email,
+        photoUrl: photoUrl,
       );
       state = AuthState(status: AuthStatus.authenticated, user: user);
       _syncToProfileProviders();
@@ -81,6 +85,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (state.user != null) {
       _ref.read(userNameProvider.notifier).state = state.user!.name;
       _ref.read(userEmailProvider.notifier).state = state.user!.email;
+      _ref.read(userPhotoUrlProvider.notifier).state = state.user!.photoUrl;
     }
   }
 }
