@@ -49,7 +49,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_done', true);
     if (!mounted) return;
-    context.go('/home');
+    context.pushReplacement('/pet/select', extra: true);
   }
 
   void _nextPage() {

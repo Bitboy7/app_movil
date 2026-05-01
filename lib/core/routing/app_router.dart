@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/routine/presentation/screens/home_page.dart';
 import '../../features/routine/presentation/screens/task_form_page.dart';
 import '../../features/pet/presentation/screens/pet_screen.dart';
+import '../../features/pet/presentation/screens/pet_selection_page.dart';
 import '../../features/stats/presentation/screens/stats_page.dart';
 import '../../features/settings/presentation/screens/settings_page.dart';
 import '../../features/settings/presentation/screens/edit_profile_page.dart';
@@ -85,6 +86,14 @@ final appRouter = GoRouter(
       path: '/settings/edit-profile',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const EditProfilePage(),
+    ),
+    GoRoute(
+      path: '/pet/select',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final isOnboarding = state.extra as bool? ?? false;
+        return PetSelectionPage(isOnboarding: isOnboarding);
+      },
     ),
   ],
 );

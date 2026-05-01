@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/pet.dart';
 import '../../domain/models/pet_accessory.dart';
@@ -47,7 +48,7 @@ class PetScreen extends ConsumerWidget {
                     curve: Curves.elasticOut,
                     begin: const Offset(0.8, 0.8)),
                 const SizedBox(height: 40),
-                _buildLevelCard(context, pet),
+                _buildLevelCard(context, ref, pet),
                 const SizedBox(height: 24),
                 _buildAccessoriesShop(context, ref, pet),
                 const SizedBox(height: 100),
@@ -59,7 +60,7 @@ class PetScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLevelCard(BuildContext context, Pet pet) {
+  Widget _buildLevelCard(BuildContext context, WidgetRef ref, Pet pet) {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
@@ -84,6 +85,24 @@ class PetScreen extends ConsumerWidget {
               Text('Nivel ${pet.level}', style: theme.textTheme.titleLarge),
               Row(
                 children: [
+                  Text(pet.petType.name,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      )),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () => _showPetChangeDialog(context, ref),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.swap_horiz_rounded,
+                          size: 18, color: AppColors.primary),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   const Icon(Icons.monetization_on_rounded,
                       color: AppColors.warning, size: 20),
                   const SizedBox(width: 6),
@@ -217,6 +236,38 @@ class PetScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showPetChangeDialog(BuildContext context, WidgetRef ref) {
+    final pet = ref.read(petProvider);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text('¿Cambiar de mascota?',
+            style: Theme.of(context).textTheme.titleLarge),
+        content: Text(
+          'Perderás tu progreso con ${pet.petType.name} y empezarás de nuevo desde el nivel 1.',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.push('/pet/select');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+            ),
+            child: const Text('Cambiar'),
+          ),
+        ],
       ),
     );
   }
