@@ -8,65 +8,68 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final location = GoRouterState.of(context).uri.path;
     final currentIndex = _indexFromLocation(location);
 
     return Scaffold(
       body: child,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        onPressed: () => context.push('/task/new'),
-        elevation: 8,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        height: 70,
-        color: theme.colorScheme.surface,
-        elevation: 8,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _navItem(context, Icons.home_rounded, 'Inicio', 0, currentIndex, '/home'),
-            _navItem(context, Icons.pets_rounded, 'Mascota', 1, currentIndex, '/pet'),
-            const SizedBox(width: 40),
-            _navItem(context, Icons.bar_chart_rounded, 'Stats', 2, currentIndex, '/stats'),
-            _navItem(context, Icons.settings_rounded, 'Ajustes', 3, currentIndex, '/settings'),
-          ],
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: FloatingActionButton(
+          backgroundColor: AppColors.primary,
+          onPressed: () => context.push('/task/new'),
+          elevation: 8,
+          shape: const CircleBorder(),
+          child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
         ),
       ),
-    );
-  }
-
-  Widget _navItem(BuildContext context, IconData icon, String label,
-      int index, int currentIndex, String route) {
-    final selected = index == currentIndex;
-    return InkWell(
-      onTap: () => context.go(route),
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon,
-                color: selected
-                    ? AppColors.primary
-                    : AppColors.textTertiaryLight,
-                size: 24),
-            const SizedBox(height: 4),
-            Text(label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected
-                      ? AppColors.primary
-                      : AppColors.textTertiaryLight,
-                )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      extendBody: true,
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: (index) {
+            final routes = ['/home', '/pet', '/stats', '/settings'];
+            context.go(routes[index]);
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          height: 64,
+          indicatorColor: AppColors.primary.withValues(alpha: 0.12),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
+              label: 'Inicio',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.favorite_outline_rounded),
+              selectedIcon: Icon(Icons.favorite_rounded),
+              label: 'Mascota',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.bar_chart_outlined),
+              selectedIcon: Icon(Icons.bar_chart_rounded),
+              label: 'Stats',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings_rounded),
+              label: 'Ajustes',
+            ),
           ],
         ),
       ),
