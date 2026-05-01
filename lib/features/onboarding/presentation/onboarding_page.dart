@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -17,7 +18,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   static const _pages = [
     _OnboardingContent(
-      emoji: '🌅',
+      lottiePath: 'assets/lottie/checklist.json',
       title: 'Crea tu rutina diaria',
       description:
           'Organiza tus tareas con horarios y categorías. Construye hábitos que transformen tu día a día.',
@@ -26,7 +27,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       bgBottom: AppColors.primaryLight,
     ),
     _OnboardingContent(
-      emoji: '🐣',
+      lottiePath: 'assets/lottie/Hatch.json',
       title: 'Conoce a tu compañero',
       description:
           'Un pequeño amigo que evoluciona contigo. Completa tareas para ganar XP, monedas y desbloquear accesorios.',
@@ -35,7 +36,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       bgBottom: AppColors.secondaryLight,
     ),
     _OnboardingContent(
-      emoji: '✨',
+      lottiePath: 'assets/lottie/progress.json',
       title: 'Mejora cada día',
       description:
           '¡Tu disciplina tiene recompensa! Mantén tu racha, sube de nivel y personaliza a tu personaje.',
@@ -156,11 +157,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               ),
                             ],
                           ),
-                          child: Center(
-                            child: Text(
-                              p.emoji,
-                              style: const TextStyle(fontSize: 88),
-                            ),
+                          child: Lottie.asset(
+                            p.lottiePath,
+                            width: 180,
+                            height: 180,
+                            repeat: true,
                           ),
                         )
                             .animate()
@@ -293,7 +294,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 }
 
 class _OnboardingContent {
-  final String emoji;
+  final String lottiePath;
   final String title;
   final String description;
   final Color color;
@@ -301,7 +302,7 @@ class _OnboardingContent {
   final Color bgBottom;
 
   const _OnboardingContent({
-    required this.emoji,
+    required this.lottiePath,
     required this.title,
     required this.description,
     required this.color,

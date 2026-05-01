@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/animated_app_icon.dart';
 import '../../domain/models/pet.dart';
 import '../../domain/models/pet_accessory.dart';
 import '../providers/pet_providers.dart';
@@ -20,8 +21,9 @@ class PetWidget extends ConsumerWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (pet.equippedAccessories
-              .any((id) => _findAcc(id)?.type == AccessoryType.background))
+          if (pet.equippedAccessories.any(
+            (id) => _findAcc(id)?.type == AccessoryType.background,
+          ))
             _buildBackgroundLayer(pet),
           _buildPetBody(context, pet),
           ...pet.equippedAccessories.expand((id) {
@@ -45,12 +47,20 @@ class PetWidget extends ConsumerWidget {
   Widget _buildBackgroundLayer(Pet pet) {
     final bg = pet.equippedAccessories
         .map(_findAcc)
-        .firstWhere((a) => a?.type == AccessoryType.background,
-            orElse: () => null);
+        .firstWhere(
+          (a) => a?.type == AccessoryType.background,
+          orElse: () => null,
+        );
     if (bg == null) return const SizedBox.shrink();
     return Positioned.fill(
       child: Center(
-        child: Text(bg.icon, style: TextStyle(fontSize: size * 0.9)),
+        child: AnimatedAppIcon(
+          icon: bg.icon,
+          color: Colors.white.withValues(alpha: 0.65),
+          size: size * 0.58,
+          filled: false,
+          motion: AnimatedAppIconMotion.float,
+        ),
       ),
     );
   }
@@ -58,30 +68,33 @@ class PetWidget extends ConsumerWidget {
   Widget _buildPetBody(BuildContext context, Pet pet) {
     final scale = (1.0 + (pet.level * 0.02)).clamp(1.0, 1.5);
     return Container(
-      width: size * 0.6,
-      height: size * 0.7,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: _getPetColors(pet),
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(size * 0.3),
-        boxShadow: [
-          BoxShadow(
-            color: _getPetColors(pet).last.withValues(alpha: 0.4),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
+          width: size * 0.6,
+          height: size * 0.7,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _getPetColors(pet),
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(size * 0.3),
+            boxShadow: [
+              BoxShadow(
+                color: _getPetColors(pet).last.withValues(alpha: 0.4),
+                blurRadius: 30,
+                offset: const Offset(0, 15),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          _getPetEmoji(pet),
-          style: TextStyle(fontSize: size * 0.3),
-        ),
-      ),
-    )
+          child: Center(
+            child: AnimatedAppIcon(
+              icon: _getPetIcon(pet),
+              color: Colors.white,
+              size: size * 0.3,
+              filled: false,
+              motion: AnimatedAppIconMotion.pulse,
+            ),
+          ),
+        )
         .animate(onPlay: (c) => c.repeat(reverse: true))
         .scale(
           duration: 2000.ms,
@@ -95,19 +108,43 @@ class PetWidget extends ConsumerWidget {
     if (accessory.type == AccessoryType.hat) {
       return Positioned(
         top: size * 0.05,
-        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.22)),
+        child: Text(
+          accessory.icon,
+          style: TextStyle(
+            fontSize: size * 0.22,
+            color: Colors.white,
+            shadows: [
+              Shadow(color: Colors.black.withValues(alpha: 0.22), blurRadius: 8),
+            ],
+          ),
+        ),
       );
     }
     if (accessory.type == AccessoryType.glasses) {
       return Positioned(
         top: size * 0.32,
-        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.18)),
+        child: Text(
+          accessory.icon,
+          style: TextStyle(
+            fontSize: size * 0.18,
+            color: Colors.white,
+            shadows: [
+              Shadow(color: Colors.black.withValues(alpha: 0.22), blurRadius: 8),
+            ],
+          ),
+        ),
       );
     }
     if (accessory.type == AccessoryType.petEffect) {
       return Positioned(
         bottom: size * 0.05,
-        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.2)),
+        child: AnimatedAppIcon(
+          icon: accessory.icon,
+          color: Colors.white,
+          size: size * 0.2,
+          filled: false,
+          motion: AnimatedAppIconMotion.float,
+        ),
       );
     }
     return const SizedBox.shrink();
@@ -126,11 +163,11 @@ class PetWidget extends ConsumerWidget {
     return [AppColors.primaryLight, AppColors.accentLight];
   }
 
-  String _getPetEmoji(Pet pet) {
-    if (pet.level >= 15) return '🦄';
-    if (pet.level >= 10) return '🐉';
-    if (pet.level >= 5) return '🐱';
-    if (pet.level >= 3) return '🐰';
-    return '🐣';
+  IconData _getPetIcon(Pet pet) {
+    if (pet.level >= 15) return Icons.auto_awesome_rounded;
+    if (pet.level >= 10) return Icons.bolt_rounded;
+    if (pet.level >= 5) return Icons.cruelty_free_rounded;
+    if (pet.level >= 3) return Icons.pets_rounded;
+    return Icons.egg_alt_rounded;
   }
 }

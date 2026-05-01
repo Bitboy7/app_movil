@@ -86,8 +86,10 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
   }
 
   Future<void> _pickTime() async {
-    final time =
-        await showTimePicker(context: context, initialTime: _selectedTime);
+    final time = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
     if (time != null) setState(() => _selectedTime = time);
   }
 
@@ -107,12 +109,9 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
         actions: [
           if (_isEditing)
             IconButton(
-              icon: const Icon(Icons.delete_outline,
-                  color: AppColors.error),
+              icon: const Icon(Icons.delete_outline, color: AppColors.error),
               onPressed: () {
-                ref
-                    .read(tasksProvider.notifier)
-                    .deleteTask(widget.taskId!);
+                ref.read(tasksProvider.notifier).deleteTask(widget.taskId!);
                 Navigator.of(context).pop();
               },
             ),
@@ -145,9 +144,12 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                 maxLines: 2,
               ),
               const SizedBox(height: 28),
-              Text('Categoría',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w700)),
+              Text(
+                'Categoría',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
@@ -159,13 +161,15 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                     child: AnimatedContainer(
                       duration: 200.ms,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: selected
                             ? cat.color.withValues(alpha: 0.15)
                             : isDark
-                                ? AppColors.surfaceDark
-                                : AppColors.backgroundLight,
+                            ? AppColors.surfaceDark
+                            : AppColors.backgroundLight,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: selected ? cat.color : Colors.transparent,
@@ -178,14 +182,15 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                           Text(cat.emoji,
                               style: const TextStyle(fontSize: 16)),
                           const SizedBox(width: 6),
-                          Text(cat.label,
-                              style:
-                                  theme.textTheme.bodyMedium?.copyWith(
-                                color: selected
-                                    ? cat.color
-                                    : theme.textTheme.bodyMedium?.color,
-                                fontWeight: FontWeight.w600,
-                              )),
+                          Text(
+                            cat.label,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: selected
+                                  ? cat.color
+                                  : theme.textTheme.bodyMedium?.color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -193,38 +198,51 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                 }).toList(),
               ),
               const SizedBox(height: 24),
-              Text('Hora',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w700)),
+              Text(
+                'Hora',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: _pickTime,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 16),
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   side: BorderSide(
-                      color: isDark
-                          ? AppColors.textTertiaryDark
-                          : AppColors.textTertiaryLight),
+                    color: isDark
+                        ? AppColors.textTertiaryDark
+                        : AppColors.textTertiaryLight,
+                  ),
                 ),
                 icon: const Icon(Icons.access_time_rounded),
-                label: Text(_selectedTime.toFormattedString(),
-                    style: theme.textTheme.titleMedium),
+                label: Text(
+                  _selectedTime.toFormattedString(),
+                  style: theme.textTheme.titleMedium,
+                ),
               ),
               const SizedBox(height: 24),
-              Text('Repetir',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w700)),
+              Text(
+                'Repetir',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: 12),
               _buildDaySelector(isDark),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: _save,
                 child: Text(
-                    _isEditing ? 'Guardar cambios' : 'Crear tarea',
-                    style: const TextStyle(color: Colors.white)),
+                  _isEditing ? 'Guardar cambios' : 'Crear tarea',
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -258,24 +276,24 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
               color: selected
                   ? AppColors.primary
                   : isDark
-                      ? AppColors.surfaceDark
-                      : AppColors.backgroundLight,
+                  ? AppColors.surfaceDark
+                  : AppColors.backgroundLight,
               borderRadius: BorderRadius.circular(12),
               border: selected
                   ? null
                   : Border.all(
-                      color: AppColors.textTertiaryLight
-                          .withValues(alpha: 0.3)),
+                      color: AppColors.textTertiaryLight.withValues(alpha: 0.3),
+                    ),
             ),
             child: Center(
-              child: Text(days[index],
-                  style: TextStyle(
-                    color: selected
-                        ? Colors.white
-                        : AppColors.textTertiaryLight,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                  )),
+              child: Text(
+                days[index],
+                style: TextStyle(
+                  color: selected ? Colors.white : AppColors.textTertiaryLight,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
         );

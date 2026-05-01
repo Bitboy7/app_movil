@@ -17,15 +17,15 @@ class HomePage extends ConsumerWidget {
     final notifier = ref.watch(tasksProvider.notifier);
     final tasks = ref.watch(tasksProvider);
 
-    final todayTasks = tasks.where((t) {
-      if (t.repeatDays.isEmpty) return true;
-      return t.repeatDays.contains(DateTime.now().weekday);
-    }).toList()
-      ..sort((a, b) {
-        if (a.isCompleted && !b.isCompleted) return 1;
-        if (!a.isCompleted && b.isCompleted) return -1;
-        return a.time.hour.compareTo(b.time.hour);
-      });
+    final todayTasks =
+        tasks.where((t) {
+          if (t.repeatDays.isEmpty) return true;
+          return t.repeatDays.contains(DateTime.now().weekday);
+        }).toList()..sort((a, b) {
+          if (a.isCompleted && !b.isCompleted) return 1;
+          if (!a.isCompleted && b.isCompleted) return -1;
+          return a.time.hour.compareTo(b.time.hour);
+        });
 
     final completed = todayTasks.where((t) => t.isCompleted).length;
     final total = todayTasks.length;
@@ -37,42 +37,47 @@ class HomePage extends ConsumerWidget {
           slivers: [
             SliverToBoxAdapter(
               child: _buildHeader(
-                  context, theme, ref, progress, completed, total),
+                context,
+                theme,
+                ref,
+                progress,
+                completed,
+                total,
+              ),
             ),
             SliverToBoxAdapter(
-              child: _buildSectionTitle(context, 'Tareas de hoy', onAdd: () {
-                context.push('/task/new');
-              }),
+              child: _buildSectionTitle(
+                context,
+                'Tareas de hoy',
+                onAdd: () {
+                  context.push('/task/new');
+                },
+              ),
             ),
             if (todayTasks.isEmpty)
               SliverToBoxAdapter(child: _buildEmptyState(context))
             else
               SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final task = todayTasks[index];
-                    return TaskCard(
-                      task: task,
-                      onTap: () => context.push('/task/${task.id}'),
-                      onToggle: () {
-                        final wasCompleted = task.isCompleted;
-                        notifier.toggleTask(task.id);
-                        if (!wasCompleted) {
-                          ref
-                              .read(petProvider.notifier)
-                              .addXp(task.xpReward);
-                          ref
-                              .read(petProvider.notifier)
-                              .addCoins(task.coinReward);
-                        }
-                      },
-                    )
-                        .animate()
-                        .fadeIn(duration: 300.ms, delay: (index * 50).ms)
-                        .slideX(begin: 0.05);
-                  },
-                  childCount: todayTasks.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final task = todayTasks[index];
+                  return TaskCard(
+                        task: task,
+                        onTap: () => context.push('/task/${task.id}'),
+                        onToggle: () {
+                          final wasCompleted = task.isCompleted;
+                          notifier.toggleTask(task.id);
+                          if (!wasCompleted) {
+                            ref.read(petProvider.notifier).addXp(task.xpReward);
+                            ref
+                                .read(petProvider.notifier)
+                                .addCoins(task.coinReward);
+                          }
+                        },
+                      )
+                      .animate()
+                      .fadeIn(duration: 300.ms, delay: (index * 50).ms)
+                      .slideX(begin: 0.05);
+                }, childCount: todayTasks.length),
               ),
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
@@ -81,8 +86,14 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, ThemeData theme, WidgetRef ref,
-      double progress, int completed, int total) {
+  Widget _buildHeader(
+    BuildContext context,
+    ThemeData theme,
+    WidgetRef ref,
+    double progress,
+    int completed,
+    int total,
+  ) {
     final pet = ref.watch(petProvider);
     final greeting = _getGreeting();
 
@@ -117,15 +128,19 @@ class HomePage extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(greeting,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.85),
-                        )),
+                    Text(
+                      greeting,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.85),
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text('${pet.name} Nv.${pet.level}',
-                        style: theme.textTheme.displayMedium?.copyWith(
-                          color: Colors.white,
-                        )),
+                    Text(
+                      '${pet.name} Nv.${pet.level}',
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -151,17 +166,22 @@ class HomePage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Text('$completed de $total completadas',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.8),
-              )),
+          Text(
+            '$completed de $total completadas',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
+          ),
         ],
       ),
     ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1);
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title,
-      {VoidCallback? onAdd}) {
+  Widget _buildSectionTitle(
+    BuildContext context,
+    String title, {
+    VoidCallback? onAdd,
+  }) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 28, 20, 12),
@@ -179,8 +199,7 @@ class HomePage extends ConsumerWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child:
-                    const Icon(Icons.add_rounded, color: AppColors.primary),
+                child: const Icon(Icons.add_rounded, color: AppColors.primary),
               ),
             ),
         ],
@@ -196,13 +215,17 @@ class HomePage extends ConsumerWidget {
         children: [
           const Text('✨', style: TextStyle(fontSize: 48)),
           const SizedBox(height: 16),
-          Text('Sin tareas por hoy',
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.textTheme.bodyMedium?.color,
-              )),
+          Text(
+            'Sin tareas por hoy',
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: theme.textTheme.bodyMedium?.color,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text('Crea tu primera rutina para empezar',
-              style: theme.textTheme.bodyMedium),
+          Text(
+            'Crea tu primera rutina para empezar',
+            style: theme.textTheme.bodyMedium,
+          ),
         ],
       ),
     );

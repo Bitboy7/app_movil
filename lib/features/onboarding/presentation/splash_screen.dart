@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -105,10 +106,12 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                           ],
                         ),
-                        child: const Center(
-                          child: Text(
-                            '🐣',
-                            style: TextStyle(fontSize: 60),
+                        child: Center(
+                          child: Lottie.asset(
+                            'assets/lottie/Hatch.json',
+                            width: 100,
+                            height: 100,
+                            repeat: true,
                           ),
                         ),
                       ),

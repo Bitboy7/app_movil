@@ -31,8 +31,8 @@ class TaskCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: task.isCompleted
               ? isDark
-                  ? AppColors.cardDark.withValues(alpha: 0.5)
-                  : checkedColor
+                    ? AppColors.cardDark.withValues(alpha: 0.5)
+                    : checkedColor
               : theme.cardTheme.color,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
@@ -64,13 +64,13 @@ class TaskCard extends StatelessWidget {
                   Text(
                     task.title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          decoration: task.isCompleted
-                              ? TextDecoration.lineThrough
-                              : null,
-                          color: task.isCompleted
-                              ? theme.textTheme.bodyMedium?.color
-                              : theme.textTheme.titleMedium?.color,
-                        ),
+                      decoration: task.isCompleted
+                          ? TextDecoration.lineThrough
+                          : null,
+                      color: task.isCompleted
+                          ? theme.textTheme.bodyMedium?.color
+                          : theme.textTheme.titleMedium?.color,
+                    ),
                   ),
                   if (task.description.isNotEmpty) ...[
                     const SizedBox(height: 2),
@@ -102,7 +102,9 @@ class TaskCard extends StatelessWidget {
           shape: BoxShape.circle,
           color: task.isCompleted ? task.category.color : Colors.transparent,
           border: Border.all(
-            color: task.isCompleted ? task.category.color : AppColors.textTertiaryLight,
+            color: task.isCompleted
+                ? task.category.color
+                : AppColors.textTertiaryLight,
             width: 2,
           ),
         ),
@@ -134,9 +136,9 @@ class TaskCard extends StatelessWidget {
         Text(
           '+${task.xpReward} XP',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.warning,
-                fontWeight: FontWeight.w700,
-              ),
+            color: AppColors.warning,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ],
     );
