@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/repositories/pet_repository.dart';
 import '../../domain/models/pet.dart';
 
@@ -32,5 +33,15 @@ class PetNotifier extends StateNotifier<Pet> {
   void equipAccessory(String accessoryId) {
     _repository.equipAccessory(accessoryId);
     state = _repository.pet;
+  }
+
+  Future<void> setPetType(PetType petType) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('pet_type', petType.name);
+    state = state.copyWith(
+      petType: petType,
+      name: petType.name,
+    );
+    _repository.updatePet(state);
   }
 }

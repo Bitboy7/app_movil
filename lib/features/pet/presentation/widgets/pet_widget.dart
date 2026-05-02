@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/pet.dart';
 import '../../domain/models/pet_accessory.dart';
 import '../providers/pet_providers.dart';
 
 class PetWidget extends ConsumerWidget {
   final double size;
-  const PetWidget({super.key, this.size = 200});
+  final Pet? petOverride;
+  const PetWidget({super.key, this.size = 200, this.petOverride});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pet = ref.watch(petProvider);
+    final Pet pet = petOverride ?? ref.watch(petProvider);
 
     return SizedBox(
       width: size,
@@ -57,19 +57,20 @@ class PetWidget extends ConsumerWidget {
 
   Widget _buildPetBody(BuildContext context, Pet pet) {
     final scale = (1.0 + (pet.level * 0.02)).clamp(1.0, 1.5);
+    final colors = pet.petType.getColors(pet.level);
     return Container(
       width: size * 0.6,
       height: size * 0.7,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: _getPetColors(pet),
+          colors: colors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(size * 0.3),
         boxShadow: [
           BoxShadow(
-            color: _getPetColors(pet).last.withValues(alpha: 0.4),
+            color: colors.last.withValues(alpha: 0.4),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -77,7 +78,7 @@ class PetWidget extends ConsumerWidget {
       ),
       child: Center(
         child: Text(
-          _getPetEmoji(pet),
+          pet.petType.getEmoji(pet.level),
           style: TextStyle(fontSize: size * 0.3),
         ),
       ),
@@ -111,26 +112,5 @@ class PetWidget extends ConsumerWidget {
       );
     }
     return const SizedBox.shrink();
-  }
-
-  List<Color> _getPetColors(Pet pet) {
-    if (pet.level >= 10) {
-      return [const Color(0xFFFFD700), const Color(0xFFFF6B8A)];
-    }
-    if (pet.level >= 5) {
-      return [const Color(0xFF7C5CFC), const Color(0xFF36D6E7)];
-    }
-    if (pet.level >= 3) {
-      return [const Color(0xFF4ADE80), const Color(0xFF36D6E7)];
-    }
-    return [AppColors.primaryLight, AppColors.accentLight];
-  }
-
-  String _getPetEmoji(Pet pet) {
-    if (pet.level >= 15) return '🦄';
-    if (pet.level >= 10) return '🐉';
-    if (pet.level >= 5) return '🐱';
-    if (pet.level >= 3) return '🐰';
-    return '🐣';
   }
 }
