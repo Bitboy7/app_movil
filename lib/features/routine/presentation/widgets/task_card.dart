@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/task.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback onTap;
-  final VoidCallback onToggle;
+  final EdgeInsetsGeometry? margin;
 
   const TaskCard({
     super.key,
     required this.task,
     required this.onTap,
-    required this.onToggle,
+    this.margin,
   });
 
   @override
@@ -26,35 +27,33 @@ class TaskCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: 300.ms,
         curve: Curves.easeOut,
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        padding: const EdgeInsets.all(16),
+        margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           color: task.isCompleted
               ? isDark
                     ? AppColors.cardDark.withValues(alpha: 0.5)
                     : checkedColor
               : theme.cardTheme.color,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: AppRadius.xlRadius,
           border: Border.all(
             color: task.isCompleted
                 ? task.category.color.withValues(alpha: 0.3)
-                : Colors.transparent,
-            width: 1.5,
+                : theme.colorScheme.onSurface.withValues(alpha: 0.06),
+            width: 1,
           ),
           boxShadow: task.isCompleted
               ? []
               : [
                   BoxShadow(
-                    color: task.category.color.withValues(alpha: 0.06),
-                    blurRadius: 10,
+                    color: task.category.color.withValues(alpha: 0.04),
+                    blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
                 ],
         ),
         child: Row(
           children: [
-            _buildCheckbox(context),
-            const SizedBox(width: 14),
             _buildIcon(context),
             const SizedBox(width: 14),
             Expanded(
@@ -91,37 +90,13 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckbox(BuildContext context) {
-    return GestureDetector(
-      onTap: onToggle,
-      child: AnimatedContainer(
-        duration: 300.ms,
-        width: 26,
-        height: 26,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: task.isCompleted ? task.category.color : Colors.transparent,
-          border: Border.all(
-            color: task.isCompleted
-                ? task.category.color
-                : AppColors.textTertiaryLight,
-            width: 2,
-          ),
-        ),
-        child: task.isCompleted
-            ? const Icon(Icons.check, color: Colors.white, size: 16)
-            : null,
-      ),
-    );
-  }
-
   Widget _buildIcon(BuildContext context) {
     return Container(
       width: 42,
       height: 42,
       decoration: BoxDecoration(
         color: task.category.color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.mdRadius,
       ),
       child: Icon(task.category.icon, color: task.category.color, size: 22),
     );

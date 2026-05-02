@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/pet.dart';
 import '../../domain/models/pet_accessory.dart';
 import '../providers/pet_providers.dart';
-import '../widgets/pet_widget.dart';
+import '../../../../shared/widgets/interactive_pet.dart';
 
 class PetScreen extends ConsumerWidget {
   const PetScreen({super.key});
@@ -43,7 +45,7 @@ class PetScreen extends ConsumerWidget {
                     .fadeIn(duration: 400.ms)
                     .slideY(begin: -0.1),
                 const SizedBox(height: 30),
-                const Center(child: PetWidget(size: 220)).animate().scale(
+                const Center(child: InteractivePet(size: 220)).animate().scale(
                     duration: 600.ms,
                     curve: Curves.elasticOut,
                     begin: const Offset(0.8, 0.8)),
@@ -115,13 +117,18 @@ class PetScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: pet.xpProgress,
-              minHeight: 10,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: pet.xpProgress),
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, _) => ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: value,
+                minHeight: 10,
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -170,8 +177,10 @@ class PetScreen extends ConsumerWidget {
         if (locked) return;
         if (isOwned) {
           ref.read(petProvider.notifier).equipAccessory(acc.id);
+          HapticFeedback.lightImpact();
         } else if (canBuy) {
           ref.read(petProvider.notifier).ownAndEquipAccessory(acc.id);
+          HapticFeedback.mediumImpact();
         }
       },
       child: AnimatedContainer(
@@ -209,8 +218,16 @@ class PetScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               if (locked)
-                Text('🔒 Nv.${acc.unlockLevel}',
-                    style: theme.textTheme.bodySmall)
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(PhosphorIconsRegular.lockKey,
+                          size: 14, color: AppColors.textTertiaryLight),
+                      const SizedBox(width: 4),
+                      Text('Nv.${acc.unlockLevel}',
+                          style: theme.textTheme.bodySmall),
+                    ],
+                  )
               else if (isEquipped)
                 Text('Equipado ✓',
                     style: theme.textTheme.bodySmall?.copyWith(

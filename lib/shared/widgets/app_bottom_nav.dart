@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_radius.dart';
+import 'celebration_overlay.dart';
+import 'daily_login_gate.dart';
 
 class AppBottomNav extends StatelessWidget {
   final Widget child;
@@ -35,7 +38,7 @@ class AppBottomNav extends StatelessWidget {
     final currentIndex = _indexFromLocation(location);
 
     return Scaffold(
-      body: child,
+      body: DailyLoginGate(child: CelebrationOverlay(child: child)),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(top: 8),
         child: FloatingActionButton(
@@ -92,7 +95,7 @@ class _ExpandableNavBarContent extends StatelessWidget {
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.12)
                         : Colors.transparent,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: AppRadius.mdRadius,
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
                   child: Row(

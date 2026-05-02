@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -268,16 +269,26 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               ),
                               elevation: 0,
                             ),
-                            child: Text(
-                              _currentPage == _pages.length - 1
-                                  ? 'Comenzar 🚀'
-                                  : 'Siguiente',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    _currentPage == _pages.length - 1
+                                        ? 'Comenzar'
+                                        : 'Siguiente',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  if (_currentPage == _pages.length - 1) ...[
+                                    const SizedBox(width: 8),
+                                    const Icon(PhosphorIconsRegular.rocketLaunch,
+                                        color: Colors.white, size: 20),
+                                  ],
+                                ],
                               ),
-                            ),
                           ),
                         ),
                       ),

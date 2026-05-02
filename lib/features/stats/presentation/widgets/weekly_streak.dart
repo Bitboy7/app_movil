@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../providers/stats_providers.dart';
 
 class WeeklyStreak extends StatelessWidget {
@@ -56,7 +57,7 @@ class WeeklyStreak extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppRadius.mdRadius,
               ),
               child: Center(child: child),
             ).animate().scale(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:io';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../features/auth/presentation/providers/auth_providers.dart';
 import '../providers/settings_providers.dart';
 import '../providers/profile_providers.dart';
@@ -16,6 +17,7 @@ class SettingsPage extends ConsumerWidget {
     final isDarkMode = ref.watch(isDarkModeProvider);
     final authState = ref.watch(authProvider);
     final isLoggedIn = authState.isLoggedIn;
+    final isSoundEnabled = ref.watch(soundEnabledProvider);
     final userName = ref.watch(userNameProvider);
     final userEmail = ref.watch(userEmailProvider);
     final photoUrl = ref.watch(userPhotoUrlProvider);
@@ -56,6 +58,15 @@ class SettingsPage extends ConsumerWidget {
                   subtitle: 'Cambia la apariencia de la app',
                   value: isDarkMode,
                   onChanged: (_) => ref.read(themeModeProvider.notifier).toggleDarkMode(),
+                ),
+                _buildDivider(),
+                _buildSwitchTile(
+                  context,
+                  icon: Icons.volume_up_outlined,
+                  title: 'Sonidos',
+                  subtitle: 'Efectos de sonido al interactuar',
+                  value: isSoundEnabled,
+                  onChanged: (_) => ref.read(soundEnabledProvider.notifier).toggle(),
                 ),
                 _buildDivider(),
                 _buildTapTile(
@@ -197,7 +208,9 @@ class SettingsPage extends ConsumerWidget {
               ),
               image: photoUrl != null
                   ? DecorationImage(
-                      image: FileImage(File(photoUrl)),
+                      image: photoUrl.startsWith('http')
+                          ? NetworkImage(photoUrl) as ImageProvider
+                          : FileImage(File(photoUrl)),
                       fit: BoxFit.cover,
                     )
                   : null,
@@ -231,7 +244,7 @@ class SettingsPage extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: AppColors.gradientWarm,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.xlRadius,
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.3),
@@ -244,7 +257,7 @@ class SettingsPage extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => context.push('/settings/edit-profile'),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: AppRadius.xlRadius,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
             child: Row(
@@ -288,7 +301,7 @@ class SettingsPage extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? AppColors.cardDark : AppColors.cardLight,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.xlRadius,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
@@ -403,7 +416,7 @@ class SettingsPage extends ConsumerWidget {
       SnackBar(
         content: const Text('Próximamente'),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.mdRadius),
         margin: const EdgeInsets.all(16),
       ),
     );
@@ -495,7 +508,7 @@ class SettingsPage extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.xlRadius,
         boxShadow: [
           BoxShadow(
             color: AppColors.primaryDark.withValues(alpha: 0.2),
@@ -508,7 +521,7 @@ class SettingsPage extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => context.push('/login'),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: AppRadius.xlRadius,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
             child: Text(

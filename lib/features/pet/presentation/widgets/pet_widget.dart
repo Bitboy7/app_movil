@@ -13,6 +13,7 @@ class PetWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Pet pet = petOverride ?? ref.watch(petProvider);
+    final reaction = ref.watch(petReactionProvider);
 
     return SizedBox(
       width: size,
@@ -23,7 +24,7 @@ class PetWidget extends ConsumerWidget {
           if (pet.equippedAccessories
               .any((id) => _findAcc(id)?.type == AccessoryType.background))
             _buildBackgroundLayer(pet),
-          _buildPetBody(context, pet),
+          _buildPetBody(context, pet, reaction),
           ...pet.equippedAccessories.expand((id) {
             final acc = _findAcc(id);
             if (acc == null || acc.type == AccessoryType.background) return [];
@@ -55,10 +56,11 @@ class PetWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildPetBody(BuildContext context, Pet pet) {
+  Widget _buildPetBody(BuildContext context, Pet pet, int reaction) {
     final scale = (1.0 + (pet.level * 0.02)).clamp(1.0, 1.5);
     final colors = pet.petType.getColors(pet.level);
-    return Container(
+
+    final body = Container(
       width: size * 0.6,
       height: size * 0.7,
       decoration: BoxDecoration(
@@ -80,7 +82,14 @@ class PetWidget extends ConsumerWidget {
         child: Text(
           pet.petType.getEmoji(pet.level),
           style: TextStyle(fontSize: size * 0.3),
-        ),
+        )
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .rotate(
+              duration: 2500.ms,
+              begin: -0.04,
+              end: 0.04,
+              curve: Curves.easeInOut,
+            ),
       ),
     )
         .animate(onPlay: (c) => c.repeat(reverse: true))
@@ -90,25 +99,55 @@ class PetWidget extends ConsumerWidget {
           end: Offset(scale * 1.04, scale * 1.04),
           curve: Curves.easeInOut,
         );
+
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('jump_$reaction'),
+      tween: Tween(begin: 0, end: 1),
+      duration: 600.ms,
+      curve: Curves.easeOutBack,
+      builder: (context, t, child) {
+        final jumpY = t < 0.5
+            ? -10 * (t / 0.5)
+            : -10 * (1 - (t - 0.5) / 0.5);
+        return Transform.translate(
+          offset: Offset(0, jumpY),
+          child: child,
+        );
+      },
+      child: body,
+    );
   }
 
   Widget _buildAccessoryLayer(PetAccessory accessory) {
     if (accessory.type == AccessoryType.hat) {
       return Positioned(
         top: size * 0.05,
-        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.22)),
+        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.22))
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .moveY(duration: 1500.ms, begin: 0, end: -3, curve: Curves.easeInOut),
       );
     }
     if (accessory.type == AccessoryType.glasses) {
       return Positioned(
         top: size * 0.32,
-        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.18)),
+        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.18))
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .scale(
+              duration: 1800.ms,
+              begin: const Offset(1.0, 1.0),
+              end: const Offset(1.08, 1.08),
+              curve: Curves.easeInOut,
+            ),
       );
     }
     if (accessory.type == AccessoryType.petEffect) {
       return Positioned(
         bottom: size * 0.05,
-        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.2)),
+        child: Text(accessory.icon, style: TextStyle(fontSize: size * 0.2))
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .fadeIn(duration: 1200.ms)
+            .then()
+            .fadeOut(duration: 1200.ms),
       );
     }
     return const SizedBox.shrink();

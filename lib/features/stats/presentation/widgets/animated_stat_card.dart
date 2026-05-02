@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/widgets/animated_app_icon.dart';
+import '../../../../core/theme/app_radius.dart';
 
 class AnimatedStatCard extends StatelessWidget {
   final IconData icon;
@@ -26,7 +27,7 @@ class AnimatedStatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: gradient != null ? null : theme.cardColor,
         gradient: gradient,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.xlRadius,
         boxShadow: [
           if (gradient == null)
             BoxShadow(

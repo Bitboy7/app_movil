@@ -15,6 +15,13 @@ abstract class AppColors {
   static const warning = Color(0xFFFB923C);
   static const error = Color(0xFFF87171);
 
+  // Pet emotion colors
+  static const petHappy = Color(0xFFFFD166);
+  static const petSad = Color(0xFF8B9DC3);
+  static const petNeutral = Color(0xFFB8B5E0);
+
+  // Light theme surfaces
+  static const bgLight = Color(0xFFF6F4FF);
   static const backgroundLight = Color(0xFFF8F7FC);
   static const surfaceLight = Color(0xFFFFFFFF);
   static const cardLight = Color(0xFFFFFFFF);
@@ -23,13 +30,15 @@ abstract class AppColors {
   static const textSecondaryLight = Color(0xFF6B7280);
   static const textTertiaryLight = Color(0xFF9CA3AF);
 
+  // Dark theme surfaces
+  static const bgDark = Color(0xFF0D0C1A);
   static const backgroundDark = Color(0xFF0F0F1A);
   static const surfaceDark = Color(0xFF1A1A2E);
   static const cardDark = Color(0xFF242442);
 
   static const textPrimaryDark = Color(0xFFF1F1F6);
-  static const textSecondaryDark = Color(0xFF9CA3AF);
-  static const textTertiaryDark = Color(0xFF6B7280);
+  static const textSecondaryDark = Color(0xFFB0B7C3);
+  static const textTertiaryDark = Color(0xFF7A8090);
 
   static const gradientWarm = LinearGradient(
     colors: [primary, secondary],

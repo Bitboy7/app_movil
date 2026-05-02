@@ -43,3 +43,37 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ───────────────────────────────────────────────
+# ARCHIVOS SENSIBLES — NO SUBIR AL REPOSITORIO
+# ───────────────────────────────────────────────
+
+# Firebase — contienen API keys y configuración privada
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
+
+# Variables de entorno y secretos
+.env
+.env.*
+*.env
+secrets.dart
+secrets.json
+
+# Android — firma y claves del keystore
+android/key.properties
+**/*.keystore
+**/*.jks
+
+# Android — rutas locales del SDK (ya en android/.gitignore, refuerzo aquí)
+android/local.properties
+
+# iOS — archivos de exportación con credenciales
+ios/ExportOptions.plist
+
+# OpenCode — config local que puede contener tokens
+.opencode/
+
+# Archivos de configuración local del desarrollador
+*.local.dart
+*.local.json

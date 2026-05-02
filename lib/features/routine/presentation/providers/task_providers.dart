@@ -30,8 +30,20 @@ class TasksNotifier extends StateNotifier<List<Task>> {
     state = List.from(_repository.getTasks());
   }
 
+  void postponeTask(String id) {
+    _repository.postponeTask(id);
+    state = List.from(_repository.getTasks());
+  }
+
+  bool isTaskSkippedToday(String id) => _repository.isTaskSkippedToday(id);
+
   void deleteTask(String id) {
     _repository.deleteTask(id);
+    state = List.from(_repository.getTasks());
+  }
+
+  void resetDaily() {
+    _repository.resetDailyTasks();
     state = List.from(_repository.getTasks());
   }
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
+import 'app_design_tokens.dart';
+import 'app_radius.dart';
 
 class AppTheme {
   static ThemeData light = ThemeData(
     useMaterial3: true,
+    extensions: const [AppDesignTokens.light],
     brightness: Brightness.light,
     colorScheme: ColorScheme.light(
       primary: AppColors.primary,
@@ -16,7 +19,7 @@ class AppTheme {
       onSurface: AppColors.textPrimaryLight,
       error: AppColors.error,
     ),
-    scaffoldBackgroundColor: AppColors.backgroundLight,
+    scaffoldBackgroundColor: AppColors.bgLight,
     textTheme: GoogleFonts.nunitoTextTheme().copyWith(
       displayLarge: GoogleFonts.nunito(
         fontSize: 32,
@@ -67,7 +70,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: AppColors.cardLight,
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.xlRadius),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -85,7 +88,7 @@ class AppTheme {
         foregroundColor: Colors.white,
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
         textStyle: GoogleFonts.nunito(
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -96,11 +99,11 @@ class AppTheme {
       filled: true,
       fillColor: AppColors.backgroundLight,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lgRadius,
         borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lgRadius,
         borderSide: const BorderSide(color: AppColors.primary, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -128,6 +131,7 @@ class AppTheme {
 
   static ThemeData dark = ThemeData(
     useMaterial3: true,
+    extensions: const [AppDesignTokens.dark],
     brightness: Brightness.dark,
     colorScheme: ColorScheme.dark(
       primary: AppColors.primaryLight,
@@ -139,7 +143,7 @@ class AppTheme {
       onSurface: AppColors.textPrimaryDark,
       error: AppColors.error,
     ),
-    scaffoldBackgroundColor: AppColors.backgroundDark,
+    scaffoldBackgroundColor: AppColors.bgDark,
     textTheme: GoogleFonts.nunitoTextTheme().copyWith(
       displayLarge: GoogleFonts.nunito(
         fontSize: 32,
@@ -179,7 +183,7 @@ class AppTheme {
       bodySmall: GoogleFonts.nunito(
         fontSize: 12,
         fontWeight: FontWeight.w500,
-        color: AppColors.textTertiaryDark,
+        color: AppColors.textSecondaryDark,
       ),
       labelLarge: GoogleFonts.nunito(
         fontSize: 14,
@@ -190,7 +194,7 @@ class AppTheme {
     cardTheme: CardThemeData(
       color: AppColors.cardDark,
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.xlRadius),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -208,7 +212,7 @@ class AppTheme {
         foregroundColor: Colors.white,
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
         textStyle: GoogleFonts.nunito(
           fontSize: 16,
           fontWeight: FontWeight.w700,
@@ -219,11 +223,11 @@ class AppTheme {
       filled: true,
       fillColor: AppColors.surfaceDark,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lgRadius,
         borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lgRadius,
         borderSide: const BorderSide(color: AppColors.primaryLight, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

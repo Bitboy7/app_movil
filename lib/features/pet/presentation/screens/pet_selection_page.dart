@@ -66,7 +66,7 @@ class _PetSelectionPageState extends ConsumerState<PetSelectionPage> {
                 padding: const EdgeInsets.all(16),
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                childAspectRatio: 0.85,
+                childAspectRatio: 0.78,
                 children: types.map((type) => _buildPetCard(context, type)).toList(),
               ),
             ),

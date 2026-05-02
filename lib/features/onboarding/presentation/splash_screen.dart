@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
@@ -54,10 +55,20 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _checkAndNavigate() async {
     await Future.delayed(const Duration(milliseconds: 2400));
     if (!mounted) return;
+
     final prefs = await SharedPreferences.getInstance();
     final done = prefs.getBool('onboarding_done') ?? false;
+    final isLoggedIn = FirebaseAuth.instance.currentUser != null;
+
     if (!mounted) return;
-    context.go(done ? '/home' : '/onboarding');
+
+    if (isLoggedIn) {
+      context.go('/home');
+    } else if (done) {
+      context.go('/home');
+    } else {
+      context.go('/onboarding');
+    }
   }
 
   @override

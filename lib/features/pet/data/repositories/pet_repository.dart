@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/models/pet.dart';
 
@@ -6,6 +7,7 @@ class PetRepository {
   late final Box<List<dynamic>> _ownedBox;
   Pet _pet = const Pet();
   List<String> _ownedAccessoryIds = [];
+  bool _didLevelUp = false;
 
   PetRepository() {
     _petBox = Hive.box<Pet>('pet');
@@ -24,9 +26,15 @@ class PetRepository {
 
   Pet get pet => _pet;
   List<String> get ownedAccessoryIds => List.unmodifiable(_ownedAccessoryIds);
+  bool get didLevelUp => _didLevelUp;
 
   void addXp(int amount) {
+    final oldLevel = _pet.level;
     _pet = _pet.addXp(amount);
+    _didLevelUp = _pet.level > oldLevel;
+    if (_didLevelUp) {
+      HapticFeedback.heavyImpact();
+    }
     _updateMood();
     _savePet();
   }

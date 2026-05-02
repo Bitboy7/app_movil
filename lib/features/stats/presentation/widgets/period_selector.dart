@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../providers/stats_providers.dart';
+import '../../../../core/theme/app_radius.dart';
 
 class PeriodSelector extends StatelessWidget {
   final StatsPeriod selected;
@@ -19,7 +20,7 @@ class PeriodSelector extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lgRadius,
       ),
       child: Row(
         children: [
@@ -44,7 +45,7 @@ class PeriodSelector extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.mdRadius,
           ),
           child: Center(
             child: Text(

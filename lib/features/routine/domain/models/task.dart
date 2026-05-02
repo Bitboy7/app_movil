@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 enum TaskCategory {
-  health('Salud', Icons.favorite, Color(0xFFF87171), '❤️'),
-  work('Trabajo', Icons.work, Color(0xFF7C5CFC), '💼'),
-  personal('Personal', Icons.person, Color(0xFF36D6E7), '🧘'),
-  learning('Aprendizaje', Icons.school, Color(0xFF4ADE80), '📚'),
-  home('Hogar', Icons.home, Color(0xFFFB923C), '🏠'),
-  social('Social', Icons.people, Color(0xFFFF6B8A), '🤝');
+  health('Salud', Icons.favorite, Color(0xFFF87171), PhosphorIconsRegular.heart),
+  work('Trabajo', Icons.work, Color(0xFF7C5CFC), PhosphorIconsRegular.briefcase),
+  personal('Personal', Icons.person, Color(0xFF36D6E7), PhosphorIconsRegular.person),
+  learning('Aprendizaje', Icons.school, Color(0xFF4ADE80), PhosphorIconsRegular.books),
+  home('Hogar', Icons.home, Color(0xFFFB923C), PhosphorIconsRegular.house),
+  social('Social', Icons.people, Color(0xFFFF6B8A), PhosphorIconsRegular.usersThree);
 
   final String label;
   final IconData icon;
   final Color color;
-  final String emoji;
+  final IconData emoji;
 
   const TaskCategory(this.label, this.icon, this.color, this.emoji);
 

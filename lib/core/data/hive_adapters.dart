@@ -20,6 +20,7 @@ class HiveService {
     await Hive.openBox<Task>('tasks_v2');
     await Hive.openBox<Pet>('pet');
     await Hive.openBox<List>('accessories');
+    await Hive.openBox('postponed_tasks');
   }
 }
 

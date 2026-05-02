@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../domain/models/task.dart';
 import '../providers/task_providers.dart';
@@ -170,7 +171,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                             : isDark
                             ? AppColors.surfaceDark
                             : AppColors.backgroundLight,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: AppRadius.mdRadius,
                         border: Border.all(
                           color: selected ? cat.color : Colors.transparent,
                           width: 1.5,
@@ -179,8 +180,11 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(cat.emoji,
-                              style: const TextStyle(fontSize: 16)),
+                          Icon(cat.emoji,
+                              size: 18,
+                              color: selected
+                                  ? cat.color
+                                  : theme.textTheme.bodyMedium?.color),
                           const SizedBox(width: 6),
                           Text(
                             cat.label,
@@ -278,7 +282,7 @@ class _TaskFormPageState extends ConsumerState<TaskFormPage> {
                   : isDark
                   ? AppColors.surfaceDark
                   : AppColors.backgroundLight,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadius.mdRadius,
               border: selected
                   ? null
                   : Border.all(

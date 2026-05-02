@@ -23,17 +23,24 @@ flutter pub get
 
 # Run on connected device/emulator
 flutter run
+
+# Generate Riverpod providers
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ## Architecture
 
 - Standard Flutter app (stable channel), Dart SDK `^3.9.2`.
-- Entrypoint: `lib/main.dart` — `MyApp` (StatelessWidget), `MyHomePage` (StatefulWidget with counter).
-- Target platforms: Android, iOS, Windows, macOS, Linux, Web.
-- Lint rules: `package:flutter_lints/flutter.yaml` (default Flutter lint set).
+- Entrypoint: `lib/main.dart` — initializes Hive and Riverpod `ProviderScope`.
+- State management: Riverpod with code generation (`riverpod_annotation`, `riverpod_generator`).
+- Routing: `go_router` (defined in `lib/core/routing/app_router.dart`).
+- Local storage: `hive_flutter` (adapters in `lib/core/data/hive_adapters.dart`).
+- Animations: `flutter_animate` and `lottie`.
+- Architecture: Feature-based folder structure (`lib/features/{auth,pet,routine,settings,stats,onboarding}`).
 
 ## Conventions
 
 - Trailing commas on widget trees (e.g. `Scaffold`, `Column`) to enable Flutter's auto-formatter.
 - No CI, no pre-commit hooks. Run `flutter analyze` before committing.
 - The `pubspec.lock` is committed — it's an app, not a library package.
+- Run `dart run build_runner build --delete-conflicting-outputs` after modifying `.g.dart` files.

@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,8 +18,10 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _gradientController;
+  late final AnimationController _shakeController;
+  late final Animation<double> _shakeOffset;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -28,27 +33,64 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat(reverse: true);
+
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _shakeOffset = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _shakeController, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void dispose() {
     _gradientController.dispose();
+    _shakeController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _triggerShake() {
+    _shakeController.reset();
+    _shakeController.forward();
+    HapticFeedback.lightImpact();
   }
 
   Future<void> _handleLogin() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (email.isEmpty || password.isEmpty) return;
+    if (email.isEmpty || password.isEmpty) {
+      _triggerShake();
+      return;
+    }
 
     await ref.read(authProvider.notifier).login(email, password);
 
     if (mounted && context.mounted) {
       context.pop();
     }
+  }
+
+  double _shakeValue() {
+    const amplitude = 6.0;
+    const oscillations = 4;
+    final progress = _shakeOffset.value;
+    return amplitude * sin(progress * oscillations * pi) * (1 - progress);
+  }
+
+  Widget _buildShakableWidget(Widget child) {
+    return AnimatedBuilder(
+      animation: _shakeController,
+      builder: (context, _) {
+        return Transform.translate(
+          offset: Offset(_shakeValue(), 0),
+          child: child,
+        );
+      },
+    );
   }
 
   @override
@@ -238,40 +280,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
                           const SizedBox(height: 32),
 
-                          TextField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              labelText: 'Correo electrónico',
-                              prefixIcon: const Icon(Icons.email_rounded),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
+                          _buildShakableWidget(
+                            TextField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                labelText: 'Correo electrónico',
+                                prefixIcon: const Icon(Icons.email_rounded),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
                             ),
                           ).animate().fadeIn(delay: 150.ms, duration: 400.ms).slideY(begin: 0.1),
 
                           const SizedBox(height: 16),
 
-                          TextField(
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            decoration: InputDecoration(
-                              labelText: 'Contraseña',
-                              prefixIcon: const Icon(Icons.lock_rounded),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_off_rounded
-                                      : Icons.visibility_rounded,
+                          _buildShakableWidget(
+                            TextField(
+                              controller: _passwordController,
+                              obscureText: _obscurePassword,
+                              decoration: InputDecoration(
+                                labelText: 'Contraseña',
+                                prefixIcon: const Icon(Icons.lock_rounded),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_off_rounded
+                                        : Icons.visibility_rounded,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
                             ),
                           ).animate().fadeIn(delay: 250.ms, duration: 400.ms).slideY(begin: 0.1),
@@ -384,9 +430,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    await ref.read(authProvider.notifier).signInWithGoogle();
+
+    if (mounted && context.mounted) {
+      final authState = ref.read(authProvider);
+      if (authState.isLoggedIn) {
+        context.pop();
+      } else if (authState.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${authState.error}')),
+        );
+      }
+    }
+  }
+
   Widget _buildGoogleButton(ThemeData theme) {
     return OutlinedButton(
-      onPressed: () {},
+      onPressed: _handleGoogleSignIn,
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 14),
         shape: RoundedRectangleBorder(

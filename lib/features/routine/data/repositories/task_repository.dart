@@ -86,9 +86,17 @@ class TaskRepository {
 
   List<Task> getTasks() => List.unmodifiable(_box.values.toList());
 
+  bool isTaskSkippedToday(String taskId) {
+    final today = DateTime.now().toIso8601String().split('T').first;
+    final box = Hive.box('postponed_tasks');
+    final raw = box.get(taskId, defaultValue: '') as String;
+    return raw.split(',').contains(today);
+  }
+
   List<Task> getTasksForToday() {
     final today = DateTime.now().weekday;
     return getTasks().where((t) {
+      if (isTaskSkippedToday(t.id)) return false;
       if (t.repeatDays.isEmpty) return true;
       return t.repeatDays.contains(today);
     }).toList()
@@ -97,6 +105,17 @@ class TaskRepository {
         if (!a.isCompleted && b.isCompleted) return -1;
         return a.time.hour.compareTo(b.time.hour);
       });
+  }
+
+  void postponeTask(String id) {
+    final today = DateTime.now().toIso8601String().split('T').first;
+    final box = Hive.box('postponed_tasks');
+    final raw = box.get(id, defaultValue: '') as String;
+    final dates = raw.isEmpty ? <String>[] : raw.split(',');
+    if (!dates.contains(today)) {
+      dates.add(today);
+      box.put(id, dates.join(','));
+    }
   }
 
   List<Task> getCompletedTasks() =>
@@ -115,7 +134,7 @@ class TaskRepository {
       updateTask(
         task.copyWith(
           isCompleted: !task.isCompleted,
-          completedAt: !task.isCompleted ? now : null,
+          completedAt: task.isCompleted ? null : (task.completedAt ?? now),
         ),
       );
     }
