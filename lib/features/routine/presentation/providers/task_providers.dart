@@ -35,6 +35,11 @@ class TasksNotifier extends StateNotifier<List<Task>> {
     state = List.from(_repository.getTasks());
   }
 
+  void resetDailyTasks() {
+    _repository.resetDailyTasks();
+    state = List.from(_repository.getTasks());
+  }
+
   List<Task> get todayTasks => _repository.getTasksForToday();
   double get completionRate => _repository.completionRate;
   int get completedCount => _repository.completedCount;
