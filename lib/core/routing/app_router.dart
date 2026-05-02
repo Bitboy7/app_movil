@@ -9,6 +9,7 @@ import '../../features/settings/presentation/screens/settings_page.dart';
 import '../../features/settings/presentation/screens/edit_profile_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/onboarding/presentation/splash_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../shared/widgets/app_bottom_nav.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -38,6 +39,27 @@ final appRouter = GoRouter(
       path: '/onboarding',
       pageBuilder: (context, state) =>
           _fadePage(state.pageKey, const OnboardingPage()),
+    ),
+    GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: const LoginScreen(),
+        transitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (context, animation, _, child) => SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.15),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          )),
+          child: FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        ),
+      ),
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,

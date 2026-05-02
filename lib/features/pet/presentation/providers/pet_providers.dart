@@ -15,6 +15,8 @@ class PetNotifier extends StateNotifier<Pet> {
   final PetRepository _repository;
   PetNotifier(this._repository) : super(_repository.pet);
 
+  List<String> get ownedAccessoryIds => _repository.ownedAccessoryIds;
+
   void addXp(int amount) {
     _repository.addXp(amount);
     state = _repository.pet;
@@ -25,8 +27,15 @@ class PetNotifier extends StateNotifier<Pet> {
     state = _repository.pet;
   }
 
-  void spendCoins(int amount) {
-    _repository.spendCoins(amount);
+  bool spendCoins(int amount) {
+    final success = _repository.spendCoins(amount);
+    if (success) state = _repository.pet;
+    return success;
+  }
+
+  void ownAndEquipAccessory(String accessoryId) {
+    _repository.ownAccessory(accessoryId);
+    _repository.equipAccessory(accessoryId);
     state = _repository.pet;
   }
 

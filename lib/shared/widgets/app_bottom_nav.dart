@@ -6,6 +6,29 @@ class AppBottomNav extends StatelessWidget {
   final Widget child;
   const AppBottomNav({super.key, required this.child});
 
+  static const _routes = ['/home', '/pet', '/stats', '/settings'];
+  static const _labels = ['Inicio', 'Mascota', 'Stats', 'Ajustes'];
+  static const _icons = [
+    Icons.home_outlined,
+    Icons.favorite_outline_rounded,
+    Icons.bar_chart_outlined,
+    Icons.settings_outlined,
+  ];
+  static const _selectedIcons = [
+    Icons.home_rounded,
+    Icons.favorite_rounded,
+    Icons.bar_chart_rounded,
+    Icons.settings_rounded,
+  ];
+
+  int _indexFromLocation(String location) {
+    if (location.startsWith('/home')) return 0;
+    if (location.startsWith('/pet')) return 1;
+    if (location.startsWith('/stats')) return 2;
+    if (location.startsWith('/settings')) return 3;
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
@@ -38,49 +61,102 @@ class AppBottomNav extends StatelessWidget {
             ),
           ],
         ),
-        child: NavigationBar(
-          selectedIndex: currentIndex,
-          onDestinationSelected: (index) {
-            final routes = ['/home', '/pet', '/stats', '/settings'];
-            context.go(routes[index]);
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          height: 64,
-          indicatorColor: AppColors.primary.withValues(alpha: 0.12),
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded),
-              label: 'Inicio',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.favorite_outline_rounded),
-              selectedIcon: Icon(Icons.favorite_rounded),
-              label: 'Mascota',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.bar_chart_outlined),
-              selectedIcon: Icon(Icons.bar_chart_rounded),
-              label: 'Stats',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings_rounded),
-              label: 'Ajustes',
-            ),
-          ],
-        ),
+        child: _ExpandableNavBarContent(currentIndex: currentIndex),
       ),
     );
   }
+}
 
-  int _indexFromLocation(String location) {
-    if (location.startsWith('/home')) return 0;
-    if (location.startsWith('/pet')) return 1;
-    if (location.startsWith('/stats')) return 2;
-    if (location.startsWith('/settings')) return 3;
-    return 0;
+class _ExpandableNavBarContent extends StatelessWidget {
+  final int currentIndex;
+  const _ExpandableNavBarContent({required this.currentIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      height: 64,
+      child: Row(
+        children: List.generate(AppBottomNav._routes.length, (index) {
+          final isSelected = index == currentIndex;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => context.go(AppBottomNav._routes[index]),
+              behavior: HitTestBehavior.opaque,
+              child: Center(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 350),
+                  curve: Curves.easeInOutCubic,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primary.withValues(alpha: 0.12)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AnimatedScale(
+                        scale: isSelected ? 1.0 : 0.85,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          switchInCurve: Curves.easeOut,
+                          switchOutCurve: Curves.easeIn,
+                          transitionBuilder: (child, animation) =>
+                              ScaleTransition(scale: animation, child: child),
+                          child: Icon(
+                            key: ValueKey(
+                              isSelected
+                                  ? AppBottomNav._selectedIcons[index]
+                                  : AppBottomNav._icons[index],
+                            ),
+                            isSelected
+                                ? AppBottomNav._selectedIcons[index]
+                                : AppBottomNav._icons[index],
+                            size: 24,
+                            color: isSelected
+                                ? AppColors.primary
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.35),
+                          ),
+                        ),
+                      ),
+                      ClipRect(
+                        child: AnimatedSize(
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeInOutCubic,
+                          alignment: Alignment.centerLeft,
+                          child: isSelected
+                              ? Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 48),
+                                    child: Text(
+                                      AppBottomNav._labels[index],
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(width: 0),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
   }
 }

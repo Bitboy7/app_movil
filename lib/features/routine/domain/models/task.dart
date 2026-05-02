@@ -34,6 +34,7 @@ class Task {
   final int xpReward;
   final int coinReward;
   final DateTime createdAt;
+  final DateTime? completedAt;
 
   const Task({
     required this.id,
@@ -46,6 +47,7 @@ class Task {
     this.xpReward = 20,
     this.coinReward = 5,
     required this.createdAt,
+    this.completedAt,
   });
 
   Task copyWith({
@@ -59,6 +61,7 @@ class Task {
     int? xpReward,
     int? coinReward,
     DateTime? createdAt,
+    DateTime? completedAt,
   }) {
     return Task(
       id: id ?? this.id,
@@ -71,6 +74,7 @@ class Task {
       xpReward: xpReward ?? this.xpReward,
       coinReward: coinReward ?? this.coinReward,
       createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt ?? this.completedAt,
     );
   }
 }

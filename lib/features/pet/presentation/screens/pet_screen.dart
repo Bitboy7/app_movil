@@ -148,10 +148,12 @@ class PetScreen extends ConsumerWidget {
           crossAxisSpacing: 12,
           childAspectRatio: 1.2,
           children: defaultAccessories.map((acc) {
-            final isOwned = pet.equippedAccessories.contains(acc.id);
+            final ownedIds = ref.read(petProvider.notifier).ownedAccessoryIds;
+            final isOwned = ownedIds.contains(acc.id);
+            final isEquipped = pet.equippedAccessories.contains(acc.id);
             final canBuy =
                 pet.coins >= acc.price && pet.level >= acc.unlockLevel;
-            return _shopItem(context, ref, acc, isOwned, canBuy, pet);
+            return _shopItem(context, ref, acc, isOwned, isEquipped, canBuy, pet);
           }).toList(),
         ),
       ],
@@ -159,7 +161,7 @@ class PetScreen extends ConsumerWidget {
   }
 
   Widget _shopItem(BuildContext context, WidgetRef ref, PetAccessory acc,
-      bool isOwned, bool canBuy, Pet pet) {
+      bool isOwned, bool isEquipped, bool canBuy, Pet pet) {
     final theme = Theme.of(context);
     final locked = pet.level < acc.unlockLevel;
 
@@ -169,8 +171,7 @@ class PetScreen extends ConsumerWidget {
         if (isOwned) {
           ref.read(petProvider.notifier).equipAccessory(acc.id);
         } else if (canBuy) {
-          ref.read(petProvider.notifier).spendCoins(acc.price);
-          ref.read(petProvider.notifier).equipAccessory(acc.id);
+          ref.read(petProvider.notifier).ownAndEquipAccessory(acc.id);
         }
       },
       child: AnimatedContainer(
@@ -210,8 +211,14 @@ class PetScreen extends ConsumerWidget {
               if (locked)
                 Text('🔒 Nv.${acc.unlockLevel}',
                     style: theme.textTheme.bodySmall)
-              else if (isOwned)
+              else if (isEquipped)
                 Text('Equipado ✓',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.success,
+                      fontWeight: FontWeight.w700,
+                    ))
+              else if (isOwned)
+                Text('Comprado',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.success,
                       fontWeight: FontWeight.w700,
