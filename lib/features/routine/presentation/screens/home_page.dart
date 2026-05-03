@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/routing/hero_tags.dart';
 import '../../../../core/services/sound_service.dart';
 import '../../../../shared/widgets/animated_counter.dart';
 import '../../../../shared/widgets/celebration_overlay.dart';
@@ -173,6 +174,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           task: task,
                           margin: EdgeInsets.zero,
                           onTap: () => context.push('/task/${task.id}'),
+                          heroTag: HeroTags.task(task.id),
                         ),
                       )
                       .animate()

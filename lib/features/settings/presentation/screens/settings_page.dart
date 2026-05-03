@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:io';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../features/auth/presentation/providers/auth_providers.dart';
+import '../../../../shared/widgets/profile_avatar.dart';
 import '../providers/settings_providers.dart';
 import '../providers/profile_providers.dart';
 
@@ -196,28 +196,10 @@ class SettingsPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Container(
-            width: 88,
-            height: 88,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.2),
-                width: 2,
-              ),
-              image: photoUrl != null
-                  ? DecorationImage(
-                      image: photoUrl.startsWith('http')
-                          ? NetworkImage(photoUrl) as ImageProvider
-                          : FileImage(File(photoUrl)),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: photoUrl == null
-                ? Icon(Icons.person_rounded, size: 44, color: AppColors.primary)
-                : null,
+          ProfileAvatar(
+            photoUrl: photoUrl,
+            size: 88,
+            onTap: () => context.push('/settings/edit-profile'),
           ),
           const SizedBox(height: 16),
           Text(

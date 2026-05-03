@@ -17,6 +17,10 @@ final isLoggedInProvider = Provider<bool>((ref) {
   return ref.watch(authProvider).isLoggedIn;
 });
 
+final isGoogleUserProvider = Provider<bool>((ref) {
+  return ref.watch(authProvider).user?.signInMethod == 'google.com';
+});
+
 final currentUserProvider = Provider<User?>((ref) {
   return ref.watch(authProvider).user;
 });
@@ -100,7 +104,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (state.user != null) {
       _ref.read(userNameProvider.notifier).state = state.user!.name;
       _ref.read(userEmailProvider.notifier).state = state.user!.email;
-      _ref.read(userPhotoUrlProvider.notifier).state = state.user!.photoUrl;
+      final currentPhoto = _ref.read(userPhotoUrlProvider.notifier).state;
+      if (currentPhoto == null || currentPhoto.startsWith('http')) {
+        _ref.read(userPhotoUrlProvider.notifier).state = state.user!.photoUrl;
+      }
     }
   }
 
@@ -110,6 +117,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await prefs.setString('auth_id', user.id);
     await prefs.setString('auth_name', user.name);
     await prefs.setString('auth_email', user.email);
+    if (user.signInMethod != null) {
+      await prefs.setString('auth_sign_in_method', user.signInMethod!);
+    }
     if (user.photoUrl != null) {
       await prefs.setString('user_photo_url', user.photoUrl!);
     }
@@ -123,6 +133,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await prefs.remove('auth_id');
     await prefs.remove('auth_name');
     await prefs.remove('auth_email');
+    await prefs.remove('auth_sign_in_method');
     await prefs.remove('user_name');
     await prefs.remove('user_email');
     await prefs.remove('user_photo_url');

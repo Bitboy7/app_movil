@@ -1,10 +1,14 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/routine/domain/models/task.dart';
 import '../../features/pet/domain/models/pet.dart';
 
 class HiveService {
+  static const _petDataVersionKey = 'pet_data_version';
+  static const _currentPetDataVersion = 1;
+
   static Future<void> init() async {
     await Hive.initFlutter();
 
@@ -17,10 +21,23 @@ class HiveService {
   static Box<List> get accessoriesBox => Hive.box<List>('accessories');
 
   static Future<void> openBoxes() async {
+    await _migratePetDataIfNeeded();
+
     await Hive.openBox<Task>('tasks_v2');
     await Hive.openBox<Pet>('pet');
     await Hive.openBox<List>('accessories');
     await Hive.openBox('postponed_tasks');
+  }
+
+  static Future<void> _migratePetDataIfNeeded() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedVersion = prefs.getInt(_petDataVersionKey) ?? 0;
+
+    if (savedVersion >= _currentPetDataVersion) return;
+
+    await Hive.deleteBoxFromDisk('pet');
+
+    await prefs.setInt(_petDataVersionKey, _currentPetDataVersion);
   }
 }
 
@@ -72,9 +89,16 @@ class PetAdapter extends TypeAdapter<Pet> {
   @override
   final int typeId = 2;
 
+  static const int _version = 1;
+
   @override
   Pet read(BinaryReader reader) {
+    final version = reader.readInt();
+    if (version != _version) {
+      throw StateError('Unsupported Pet data version: $version');
+    }
     return Pet(
+      petType: PetType.values[reader.readInt()],
       name: reader.readString(),
       level: reader.readInt(),
       currentXp: reader.readInt(),
@@ -87,6 +111,8 @@ class PetAdapter extends TypeAdapter<Pet> {
 
   @override
   void write(BinaryWriter writer, Pet obj) {
+    writer.writeInt(_version);
+    writer.writeInt(obj.petType.index);
     writer.writeString(obj.name);
     writer.writeInt(obj.level);
     writer.writeInt(obj.currentXp);

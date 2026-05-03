@@ -63,11 +63,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   User _mapFirebaseUser(firebase_auth.User firebaseUser) {
+    final providerId = firebaseUser.providerData.isNotEmpty
+        ? firebaseUser.providerData.first.providerId
+        : null;
     return User(
       id: firebaseUser.uid,
       name: firebaseUser.displayName ?? firebaseUser.email?.split('@').first ?? 'Usuario',
       email: firebaseUser.email ?? '',
       photoUrl: firebaseUser.photoURL,
+      signInMethod: providerId,
     );
   }
 }

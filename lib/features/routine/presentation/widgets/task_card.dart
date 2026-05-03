@@ -8,12 +8,14 @@ class TaskCard extends StatelessWidget {
   final Task task;
   final VoidCallback onTap;
   final EdgeInsetsGeometry? margin;
+  final String? heroTag;
 
   const TaskCard({
     super.key,
     required this.task,
     required this.onTap,
     this.margin,
+    this.heroTag,
   });
 
   @override
@@ -22,70 +24,84 @@ class TaskCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final checkedColor = task.category.color.withValues(alpha: 0.15);
 
+    final cardContent = AnimatedContainer(
+      duration: 300.ms,
+      curve: Curves.easeOut,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: task.isCompleted
+            ? isDark
+                ? AppColors.cardDark.withValues(alpha: 0.5)
+                : checkedColor
+            : theme.cardTheme.color,
+        borderRadius: AppRadius.xlRadius,
+        border: Border.all(
+          color: task.isCompleted
+              ? task.category.color.withValues(alpha: 0.3)
+              : theme.colorScheme.onSurface.withValues(alpha: 0.06),
+          width: 1,
+        ),
+        boxShadow: task.isCompleted
+            ? []
+            : [
+                BoxShadow(
+                  color: task.category.color.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          _buildIcon(context),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  task.title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    decoration: task.isCompleted
+                        ? TextDecoration.lineThrough
+                        : null,
+                    color: task.isCompleted
+                        ? theme.textTheme.bodyMedium?.color
+                        : theme.textTheme.titleMedium?.color,
+                  ),
+                ),
+                if (task.description.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    task.description,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          _buildRewards(context),
+        ],
+      ),
+    );
+
+    final heroContent = heroTag != null
+        ? Hero(
+            tag: heroTag!,
+            child: Material(
+              color: Colors.transparent,
+              child: cardContent,
+            ),
+          )
+        : cardContent;
+
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: 300.ms,
-        curve: Curves.easeOut,
+      child: Container(
         margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: BoxDecoration(
-          color: task.isCompleted
-              ? isDark
-                    ? AppColors.cardDark.withValues(alpha: 0.5)
-                    : checkedColor
-              : theme.cardTheme.color,
-          borderRadius: AppRadius.xlRadius,
-          border: Border.all(
-            color: task.isCompleted
-                ? task.category.color.withValues(alpha: 0.3)
-                : theme.colorScheme.onSurface.withValues(alpha: 0.06),
-            width: 1,
-          ),
-          boxShadow: task.isCompleted
-              ? []
-              : [
-                  BoxShadow(
-                    color: task.category.color.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-        ),
-        child: Row(
-          children: [
-            _buildIcon(context),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      decoration: task.isCompleted
-                          ? TextDecoration.lineThrough
-                          : null,
-                      color: task.isCompleted
-                          ? theme.textTheme.bodyMedium?.color
-                          : theme.textTheme.titleMedium?.color,
-                    ),
-                  ),
-                  if (task.description.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      task.description,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            _buildRewards(context),
-          ],
-        ),
+        child: heroContent,
       ),
     );
   }

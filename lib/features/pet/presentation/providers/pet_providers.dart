@@ -23,7 +23,26 @@ final seasonalThemeProvider = Provider<SeasonalTheme?>((ref) {
 class PetNotifier extends StateNotifier<Pet> {
   final PetRepository _repository;
   PetNotifier(this._repository) : super(_repository.pet) {
+    _init();
+  }
+
+  Future<void> _init() async {
+    await _restorePetType();
     _applySeasonalTheme();
+  }
+
+  Future<void> _restorePetType() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedIndex = prefs.getInt('pet_type');
+    if (savedIndex != null &&
+        savedIndex >= 0 &&
+        savedIndex < PetType.values.length) {
+      final petType = PetType.values[savedIndex];
+      if (state.petType != petType) {
+        state = state.copyWith(petType: petType, name: petType.name);
+        _repository.updatePet(state);
+      }
+    }
   }
 
   List<String> get ownedAccessoryIds => _repository.ownedAccessoryIds;
@@ -89,11 +108,8 @@ class PetNotifier extends StateNotifier<Pet> {
 
   Future<void> setPetType(PetType petType) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('pet_type', petType.name);
-    state = state.copyWith(
-      petType: petType,
-      name: petType.name,
-    );
+    await prefs.setInt('pet_type', petType.index);
+    state = Pet(petType: petType, name: petType.name);
     _repository.updatePet(state);
     _syncWidget();
   }

@@ -16,7 +16,12 @@ class PetRepository {
   }
 
   void _loadFromHive() {
-    _pet = _petBox.get('main') ?? const Pet();
+    try {
+      _pet = _petBox.get('main') ?? const Pet();
+    } catch (_) {
+      _petBox.delete('main');
+      _pet = const Pet();
+    }
     _ownedAccessoryIds =
         (_ownedBox.get('owned') ?? []).cast<String>();
   }

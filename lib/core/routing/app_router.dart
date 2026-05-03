@@ -11,6 +11,9 @@ import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/onboarding/presentation/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../shared/widgets/app_bottom_nav.dart';
+import '../theme/app_duration.dart';
+import '../theme/app_easing.dart';
+import 'hero_tags.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -19,10 +22,50 @@ CustomTransitionPage<void> _fadePage(LocalKey key, Widget child) =>
     CustomTransitionPage<void>(
       key: key,
       child: child,
-      transitionDuration: const Duration(milliseconds: 500),
+      transitionDuration: AppDuration.slow,
       transitionsBuilder: (context, animation, _, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        opacity: CurvedAnimation(parent: animation, curve: AppEasing.appear),
         child: child,
+      ),
+    );
+
+CustomTransitionPage<void> _slideFadePage(LocalKey key, Widget child) =>
+    CustomTransitionPage<void>(
+      key: key,
+      child: child,
+      transitionDuration: AppDuration.standard,
+      transitionsBuilder: (context, animation, _, child) => SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.15),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: AppEasing.counter,
+        )),
+        child: FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+      ),
+    );
+
+CustomTransitionPage<void> _editProfilePage(LocalKey key, Widget child) =>
+    CustomTransitionPage<void>(
+      key: key,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 450),
+      transitionsBuilder: (context, animation, _, child) => SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.12),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: AppEasing.counter,
+        )),
+        child: FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
       ),
     );
 
@@ -52,7 +95,7 @@ final appRouter = GoRouter(
             end: Offset.zero,
           ).animate(CurvedAnimation(
             parent: animation,
-            curve: Curves.easeOutCubic,
+            curve: AppEasing.counter,
           )),
           child: FadeTransition(
             opacity: animation,
@@ -94,20 +137,25 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/task/new',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const TaskFormPage(),
+      pageBuilder: (context, state) =>
+          _slideFadePage(state.pageKey, const TaskFormPage()),
     ),
     GoRoute(
       path: '/task/:id',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final id = state.pathParameters['id']!;
-        return TaskFormPage(taskId: id);
+        return _slideFadePage(
+          state.pageKey,
+          TaskFormPage(taskId: id, heroTag: HeroTags.task(id)),
+        );
       },
     ),
     GoRoute(
       path: '/settings/edit-profile',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const EditProfilePage(),
+      pageBuilder: (context, state) =>
+          _editProfilePage(state.pageKey, const EditProfilePage()),
     ),
     GoRoute(
       path: '/pet/select',
